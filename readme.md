@@ -40,8 +40,8 @@ Face-Attendance-System/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/face-attendance-system.git
-cd face-attendance-system
+git clone https://github.com/itz-Mayank/AI_Attendance_Management.git
+cd AI_Attendance_Management
 ```
 
 ### 2. Install Dependencies
