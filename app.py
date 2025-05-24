@@ -12,6 +12,7 @@ data = joblib.load("face_encodings.pkl")
 known_encodings = data["encodings"]
 known_names = data["names"]
 
+
 # Create the Flask app
 app = Flask(__name__)
 
