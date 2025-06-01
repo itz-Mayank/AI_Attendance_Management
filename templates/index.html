@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Face Attendance System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: #888888;
+      margin-bottom: 2rem;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .video-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .video-section:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    video, canvas, #previewImage {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      border-radius: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    video:hover, #previewImage:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .controls-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .control-group {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .control-group:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .control-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-family: inherit;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+      color: #000000;
+      border: 2px solid transparent;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #ffffff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .file-input {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+    }
+
+    .file-input-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .file-input-label:hover {
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    #result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      text-align: center;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .result-success {
+      background: rgba(76, 175, 80, 0.2);
+      border-color: rgba(76, 175, 80, 0.4);
+      color: #81c784;
+    }
+
+    .result-error {
+      background: rgba(244, 67, 54, 0.2);
+      border-color: rgba(244, 67, 54, 0.4);
+      color: #e57373;
+    }
+
+    .loader {
+      display: none;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 1rem;
+      color: #888888;
+    }
+
+    #previewImage {
+      display: none;
+      max-width: 100%;
+      margin-top: 1rem;
+      border-radius: 15px;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    .status-online {
+      background-color: #4caf50;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      body {
+        padding: 1rem;
+      }
+    }
+
+    .floating-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: float 10s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-particles"></div>
+  
+  <div class="container">
+    <div class="header">
+      <h1>🎯 Face Recognition</h1>
+      <p class="subtitle">Advanced attendance tracking with real-time facial recognition</p>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+        <span class="status-indicator status-online"></span>
+        <span style="font-size: 0.9rem; color: #888;">System Online</span>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="video-section">
+        <video id="video" autoplay muted></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <img id="previewImage" alt="Preview" />
+        
+        <button class="btn btn-primary" onclick="captureAndSend()">
+          📸 Capture & Recognize
+        </button>
+      </div>
+
+      <div class="controls-section">
+        <div class="control-group">
+          <h3 class="control-title">📁 Upload Image</h3>
+          <div class="file-input-wrapper">
+            <input type="file" id="imageUpload" accept="image/*" class="file-input" />
+            <label for="imageUpload" class="file-input-label">
+              🖼️ Choose Image File
+            </label>
+          </div>
+          <button class="btn btn-secondary" onclick="uploadImage()">
+            🔍 Analyze Image
+          </button>
+        </div>
+
+        <div class="control-group">
+          <h3 class="control-title">🎬 Upload Video</h3>
+          <div class="file-input-wrapper">
+            <input type="file" id="videoUpload" accept="video/*" class="file-input" />
+            <label for="videoUpload" class="file-input-label">
+              📹 Choose Video File
+            </label>
+          </div>
+          <button class="btn btn-secondary" onclick="uploadVideo()">
+            🎯 Process Video
+          </button>
+        </div>
+
+        <div class="control-group">
+          <h3 class="control-title">📊 Attendance Records</h3>
+          <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+            <span style="font-size: 0.9rem; color: #888;">Total Records: <strong id="recordCount">0</strong></span>
+            <span style="font-size: 0.9rem; color: #888;">Today: <strong id="todayCount">0</strong></span>
+          </div>
+          <button class="btn btn-secondary" onclick="downloadAttendanceCSV()">
+            📥 Download Attendance CSV
+          </button>
+          <button class="btn btn-secondary" onclick="clearAttendanceData()" style="background: rgba(244, 67, 54, 0.1); border-color: rgba(244, 67, 54, 0.3); color: #e57373;">
+            🗑️ Clear Records
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loader" id="loader">
+      <div class="spinner"></div>
+      <div class="loading-text">Processing your request...</div>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const result = document.getElementById('result');
+    const loader = document.getElementById('loader');
+    const previewImage = document.getElementById('previewImage');
+
+    // Attendance tracking
+    let attendanceRecords = [];
+    
+    // Load existing attendance data from memory
+    function loadAttendanceData() {
+      // In a real application, this would load from a database
+      // For demo purposes, we'll start with empty records
+      updateAttendanceCounters();
+    }
+
+    // Save attendance record
+    function saveAttendanceRecord(recognizedFaces, method = 'camera') {
+      const now = new Date();
+      const record = {
+        id: Date.now(),
+        timestamp: now.toISOString(),
+        date: now.toLocaleDateString(),
+        time: now.toLocaleTimeString(),
+        recognizedFaces: recognizedFaces,
+        method: method,
+        status: recognizedFaces.length > 0 ? 'present' : 'no_face_detected'
+      };
+      
+      attendanceRecords.push(record);
+      updateAttendanceCounters();
+      
+      console.log('Attendance recorded:', record);
+    }
+
+    // Update attendance counters
+    function updateAttendanceCounters() {
+      const today = new Date().toLocaleDateString();
+      const todayRecords = attendanceRecords.filter(record => record.date === today);
+      
+      document.getElementById('recordCount').textContent = attendanceRecords.length;
+      document.getElementById('todayCount').textContent = todayRecords.length;
+    }
+
+    // Download attendance as CSV
+    function downloadAttendanceCSV() {
+      if (attendanceRecords.length === 0) {
+        updateResult("⚠️ No attendance records to download.", false);
+        return;
+      }
+
+      // Create CSV content
+      const headers = ['ID', 'Date', 'Time', 'Timestamp', 'Recognized Faces', 'Method', 'Status'];
+      const csvContent = [
+        headers.join(','),
+        ...attendanceRecords.map(record => [
+          record.id,
+          `"${record.date}"`,
+          `"${record.time}"`,
+          `"${record.timestamp}"`,
+          `"${record.recognizedFaces.join('; ')}"`,
+          record.method,
+          record.status
+        ].join(','))
+      ].join('\n');
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `attendance_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      updateResult(`✅ Attendance CSV downloaded successfully! (${attendanceRecords.length} records)`, true);
+    }
+
+    // Clear attendance data
+    function clearAttendanceData() {
+      if (attendanceRecords.length === 0) {
+        updateResult("ℹ️ No records to clear.", null);
+        return;
+      }
+      
+      if (confirm(`Are you sure you want to clear all ${attendanceRecords.length} attendance records? This action cannot be undone.`)) {
+        attendanceRecords = [];
+        updateAttendanceCounters();
+        updateResult("🗑️ All attendance records have been cleared.", null);
+      }
+    }
+
+    // Initialize camera
+    navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        console.error("Error accessing webcam: ", err);
+        result.innerHTML = "❌ Camera access denied. Please allow camera permissions.";
+        result.className = "result-error";
+      });
+
+    // Create floating particles
+    function createParticles() {
+      const particleContainer = document.querySelector('.floating-particles');
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particleContainer.appendChild(particle);
+      }
+    }
+
+    function showLoader(show) {
+      loader.style.display = show ? 'block' : 'none';
+    }
+
+    function updateResult(message, isSuccess = null) {
+      result.innerHTML = message;
+      result.className = '';
+      if (isSuccess === true) {
+        result.classList.add('result-success');
+      } else if (isSuccess === false) {
+        result.classList.add('result-error');
+      }
+    }
+
+    function captureAndSend() {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0);
+
+      // Show preview image from captured frame
+      previewImage.src = canvas.toDataURL('image/jpeg', 0.8);
+      previewImage.style.display = 'block';
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('image', blob, 'capture.jpg');
+        sendToServer(formData);
+      }, 'image/jpeg', 0.8);
+    }
+
+    function uploadImage() {
+      const fileInput = document.getElementById('imageUpload');
+      if (fileInput.files.length === 0) {
+        updateResult("⚠️ Please select an image file first.", false);
+        return;
+      }
+
+      const file = fileInput.files[0];
+
+      // Show preview image from uploaded file
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append('image', file);
+      sendToServer(formData);
+    }
+
+    function uploadVideo() {
+      const fileInput = document.getElementById('videoUpload');
+      if (fileInput.files.length === 0) {
+        updateResult("⚠️ Please select a video file first.", false);
+        return;
+      }
+
+      // Hide preview image for video uploads
+      previewImage.style.display = 'none';
+
+      const formData = new FormData();
+      formData.append('video', fileInput.files[0]);
+      sendToServer(formData, '/recognize-video');
+    }
+
+    function sendToServer(formData, endpoint = '/recognize') {
+      showLoader(true);
+      updateResult("");
+
+      fetch(endpoint, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        showLoader(false);
+        const recognizedFaces = data.recognized || [];
+        
+        // Save attendance record
+        const method = endpoint.includes('video') ? 'video' : 
+                     formData.has('image') && formData.get('image').name !== 'capture.jpg' ? 'upload' : 'camera';
+        saveAttendanceRecord(recognizedFaces, method);
+        
+        if (recognizedFaces.length > 0) {
+          updateResult(`✅ Successfully recognized: <strong>${recognizedFaces.join(', ')}</strong><br>📝 Attendance marked automatically`, true);
+        } else {
+          updateResult("🔍 No known faces detected in the provided media.<br>⚠️ No attendance recorded", false);
+        }
+      })
+      .catch(error => {
+        showLoader(false);
+        console.error('Error:', error);
+        updateResult("❌ Recognition failed. Please check your connection and try again.", false);
+      });
+    }
+
+    // Update file input labels when files are selected
+    document.getElementById('imageUpload').addEventListener('change', function(e) {
+      const label = document.querySelector('label[for="imageUpload"]');
+      if (e.target.files.length > 0) {
+        label.innerHTML = `📎 ${e.target.files[0].name}`;
+      } else {
+        label.innerHTML = '🖼️ Choose Image File';
+      }
+    });
+
+    document.getElementById('videoUpload').addEventListener('change', function(e) {
+      const label = document.querySelector('label[for="videoUpload"]');
+      if (e.target.files.length > 0) {
+        label.innerHTML = `📎 ${e.target.files[0].name}`;
+      } else {
+        label.innerHTML = '📹 Choose Video File';
+      }
+    });
+
+    // Initialize particles
+    createParticles();
+    
+    // Load attendance data on page load
+    loadAttendanceData();
+  </script>
+</body>
+</html>
