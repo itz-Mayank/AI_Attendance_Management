@@ -25,14 +25,14 @@ Face-Attendance-System/
 ## 🧠 How It Works
 
 1. **Training Phase**:
-   - Face images (named as `name_#.jpg`) are stored in `Students_images/`.
+   - Face images (named as `name_#.jpg`) are stored in `Students_image/`.
    - `face_encodings.pkl` is generated using a script that extracts encodings and saves them.
 
 2. **Recognition Phase**:
    - User captures an image from webcam on the web interface.
    - Image is sent to the Flask server.
    - Server detects faces, matches with known encodings.
-   - If matched, the name and timestamp are logged in `attendance.csv`.
+   - If matched, the name and timestamp are logged in `csv` file.
 
 ## 🚀 Getting Started
 
@@ -46,12 +46,6 @@ cd AI_Attendance_Management
 ### 2. Install Dependencies
 
 Make sure you have Python 3.7+ and pip installed.
-
-```bash
-pip install -r requirements.txt
-```
-
-If you don't have a `requirements.txt`, install manually:
 
 ```bash
 pip install flask face_recognition opencv-python joblib
@@ -77,7 +71,7 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
 ## ✅ Attendance Output
 
-Attendance will be saved in `attendance.csv` like so:
+Attendance will be saved in `csv` file as a record like :
 
 ```
 Name,Timestamp
