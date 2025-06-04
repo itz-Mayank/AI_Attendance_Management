@@ -6,16 +6,15 @@ A web-based face attendance system that uses the webcam to capture a real-time i
 
 - Real-time webcam capture via browser
 - Face recognition using `face_recognition` library
-- Attendance logging to `attendance.csv`
+- Attendance logging to every recods of the recognition.
 - Simple Flask-based web interface
 
 ## 📁 Project Structure
 
 ```
 Face-Attendance-System/
-├── app.py                    # Flask application
+├── app.py                   # Flask application
 ├── face_encodings.pkl       # Pre-generated face encodings
-├── attendance.csv           # Attendance log file
 ├── Students_images/         # Folder containing student face images
 ├── templates/
 │   └── index.html           # HTML interface
