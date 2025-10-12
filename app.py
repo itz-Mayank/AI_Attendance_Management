@@ -43,7 +43,7 @@ def recognize():
     encodings = face_recognition.face_encodings(rgb_image, face_locations)
 
     recognized = []
-    threshold = 0.45  # Lower = stricter matching
+    threshold = 0.45
 
     for face_encoding in encodings:
         face_distances = face_recognition.face_distance(known_encodings, face_encoding)
@@ -57,7 +57,7 @@ def recognize():
                 recognized.append(name)
                 mark_attendance(name)
         else:
-            print("⚠️ Unknown face detected — not in dataset.")
+            print("Unknown face detected — not in dataset.")
 
     return jsonify({"recognized": recognized})
 
@@ -68,9 +68,9 @@ def mark_attendance(name):
         with open(attendance_file, 'a', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([name, timestamp])
-        print(f"✅ Attendance marked for {name} at {timestamp}")
+        print(f"Attendance marked for {name} at {timestamp}")
     except Exception as e:
-        print(f"❌ Error marking attendance: {e}")
+        print(f"Error marking attendance: {e}")
 
 if __name__ == '__main__':
     app.run(debug=True)
