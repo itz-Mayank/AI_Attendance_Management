@@ -26,7 +26,7 @@ if not os.path.exists(attendance_file):
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html") 
 
 @app.route('/recognize', methods=['POST'])
 def recognize():
