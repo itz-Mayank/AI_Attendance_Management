@@ -1,5 +1,5 @@
 # AI Attendance Management
-    
+  
 A web-based face attendance system that uses the webcam to capture a real-time image, recognizes faces using pre-saved encodings, and logs attendance with timestamps into a CSV file.
 
 ## 📦 Features
