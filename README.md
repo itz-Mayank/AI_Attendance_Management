@@ -2,7 +2,7 @@
   
 A web-based face attendance system that uses the webcam to capture a real-time image, recognizes faces using pre-saved encodings, and logs attendance with timestamps into a CSV file.
 
-## 📦 Features
+## 📦 Features 
 
 - Real-time webcam capture via browser
 - Face recognition using `face_recognition` library
