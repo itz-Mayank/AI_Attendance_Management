@@ -8,7 +8,7 @@ A web-based face attendance system that uses the webcam to capture a real-time i
 - Face recognition using `face_recognition` library
 - Attendance logging to every records of the recognition.
 - Simple Flask-based web interface
-
+ 
 ## 📁 Project Structure  
 
 ```
