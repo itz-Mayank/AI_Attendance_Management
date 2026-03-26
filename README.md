@@ -10,7 +10,7 @@ A web-based face attendance system that uses the webcam to capture a real-time i
 - Simple Flask-based web interface
  
 ## 📁 Project Structure  
-
+ 
 ```
 Face-Attendance-System/
 ├── app.py                   # Flask application
